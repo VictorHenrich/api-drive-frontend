@@ -14,12 +14,13 @@ import ButtonDefault from '../../Components/ButtonDefault';
 import ContainerApp from "../../Components/ContainerApp";
 import InputDefault from '../../Components/InputDefault';
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { StoreProps } from '../../Redux/store';
 import { PayloadUser } from '../../Redux/Reducers/UserSlice';
 import AlertDefault, { AlertDefaultProps } from '../../Components/AlertDefault';
 import UserUpdateService from '../../Services/User/UserUpdateService';
 import UserLoadingService from '../../Services/User/UserLoadingService';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -33,7 +34,8 @@ interface SettingsDataProps{
 
 export default function UserSettingsPage(props: any){
 
-    const dispath = useDispatch();
+    const navigate = useNavigate();
+
     let user: PayloadUser = useSelector<StoreProps, PayloadUser>(({ user })=> user);
 
     const [userData, setUserData] = useState<SettingsDataProps>({
@@ -80,7 +82,6 @@ export default function UserSettingsPage(props: any){
     }
 
     async function submitForm(): Promise<void>{
-
        try{
 
         if(userData.password !== userData.passwordConfirm)
@@ -90,13 +91,13 @@ export default function UserSettingsPage(props: any){
 
         await userUpdateService.execute({ ...userData });
 
+        await loadUser();
+
         changeAlertData({ 
             open: true,
             message: "Usuário foi alterado com sucesso!",
             status: "success"
         });
-
-        await loadUser();
         
        }catch(error){
             changeAlertData({ 
@@ -112,6 +113,7 @@ export default function UserSettingsPage(props: any){
             <Center
                 width="full"
                 height="full"
+                position="relative"
             >
                 <Card
                     width="60%"
@@ -211,6 +213,9 @@ export default function UserSettingsPage(props: any){
                                     text='Cancelar'
                                     colorPrimary='red'
                                     width={250}
+                                    onClick={() => {
+                                        navigate('/drives');
+                                    }}
                                 />
                             </Stack>
                         </Center>
@@ -221,6 +226,7 @@ export default function UserSettingsPage(props: any){
                     onClose={() => changeAlertData({ open: false })}
                 />
             </Center>
+            
         </ContainerApp>
     );
 }

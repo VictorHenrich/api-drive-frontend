@@ -15,21 +15,25 @@ import {
 
 import ContainerApp from "../../Components/ContainerApp";
 import FileItem, { FileItemProps, MenuOption } from '../../Components/FileItem';
-import UploadFileDialog, { ResultUploadFileDialog } from './Dialogs/UploadFileDialog';
+import FileUploadDialog, { ResultUploadFileDialog } from './Dialogs/FileUploadDialog';
 import AlertDefault, { AlertDefaultProps } from '../../Components/AlertDefault';
-import UploadFileService from '../../Services/Drive/UploadFileService';
+import FileUploadService from '../../Services/Drive/FileUploadService';
 import LoadingFilesService from '../../Services/Drive/LoadingFilesService';
 import DownloadFileService from '../../Services/Drive/DownloadFileService';
 import downloadFile from '../../Utils/downloadFile';
+import FileExclusionService from '../../Services/Drive/FileExclusionService';
+import FileUpdateDialog, { FileUpdatePayload } from './Dialogs/FileUpdateDialog';
+import FileUpdateService from '../../Services/Drive/FileUpdateService';
 
 interface PayloadFileApi{
     filename: string,
     uuid: string
 }
 
-
 export default function HomePage(props: any){
     const [openUploadFileDialog, setOpenUploadFileDialog] = useState<boolean>(false);
+    const [openFileUpdateDialog, setOpenFileUpdateDialog] = useState<boolean>(false);
+    const [itemUpdateSelected, setItemUpdateSelected] = useState<PayloadFileApi | null>(null);
     const [listFiles, setListFiles] = useState<Array<FileItemProps<PayloadFileApi>>>([]);
     const [alertData, setAlertData] = useState<Omit<AlertDefaultProps, "onClose">>({
         open: false,
@@ -40,15 +44,15 @@ export default function HomePage(props: any){
 
     const optionsMenuFile: MenuOption<PayloadFileApi>[] = [
         {
-            onClick: () => null,
+            onClick: updateFileSelected,
             text: "Alterar"
         },
         {
-            onClick: () => null,
+            onClick: deleteFileSelected,
             text: "Excluir"
         },
         {
-            onClick: loadFile,
+            onClick: downloadFileSelected,
             text: "Baixar"
         }
     ]
@@ -60,17 +64,23 @@ export default function HomePage(props: any){
 
     async function uploadFile({ file, filename }: ResultUploadFileDialog){
         try{
-            const uploadFileService = new UploadFileService();
+            const uploadFileService = new FileUploadService();
 
-            await uploadFileService.execute({ filename, content: file });
+            const [, filetype ] = file.name.split('.');
+
+            await uploadFileService.execute({ 
+                filename,
+                filetype,
+                content: file 
+            });
+
+            await loadFiles();
 
             changeAlertData({ 
                 open: true,
                 message: "Arquivo carregado com sucesso!",
                 status: "success"
             });
-
-            await loadFiles();
 
         }catch(error){
             changeAlertData({ 
@@ -100,12 +110,76 @@ export default function HomePage(props: any){
         );
     }
 
-    async function loadFile({ filename, uuid }: PayloadFileApi){
+    async function downloadFileSelected({ filename, uuid }: PayloadFileApi){
         const downloadFileService = new DownloadFileService();
 
         let file: Blob = await downloadFileService.execute({ driveUUID: uuid });
 
         downloadFile(file, filename);
+    }
+
+    async function deleteFileSelected({ uuid: driveUUID }: PayloadFileApi){
+        try{
+
+            const fileExclusionService = new FileExclusionService();
+
+            await fileExclusionService.execute({ driveUUID });
+            
+            await loadFiles();
+
+            changeAlertData({ 
+                open: true, 
+                status: "success", 
+                title: "Exclusão de arquivo!",
+                message: "Arquivo excluído com sucesso!"
+            });
+
+        }catch(error){
+            changeAlertData({ 
+                open: true, 
+                status: "warning", 
+                title: "Exclusão de arquivo!",
+                message: "Falha ao excluir arquivo!"
+            });
+        }
+    }
+
+    async function updateFile({ filename, uuid }: PayloadFileApi){
+        try{
+            const fileUpdateService = new FileUpdateService();
+
+            await fileUpdateService.execute({ filename, driveUUID: uuid });
+
+            await loadFiles();
+
+            setOpenFileUpdateDialog(false);
+            
+            setItemUpdateSelected(null);
+
+            changeAlertData({ 
+                open: true, 
+                status: "success", 
+                title: "Alteração de arquivo!",
+                message: "Arquivo alterado com sucesso!"
+            });
+
+        }catch(error){
+
+            changeAlertData({ 
+                open: true, 
+                status: "warning", 
+                title: "Alteração de arquivo!",
+                message: "Falha ao alterar arquivo!"
+            });
+        }
+    }
+
+    function updateFileSelected(data: PayloadFileApi){
+        let [filename]: string[] = data.filename.split('.');
+
+        setItemUpdateSelected({ ...data, filename });
+        
+        setOpenFileUpdateDialog(true);
     }
 
     function changeAlertData(props: Partial<AlertDefaultProps>): void{
@@ -179,12 +253,21 @@ export default function HomePage(props: any){
                         color="#FFFFFF"
                     />
                 </Center>
-                <UploadFileDialog 
+                <FileUploadDialog 
                     onCancel={() => {
                         setOpenUploadFileDialog(false);
                     }} 
                     onConfirm={uploadFile} 
                     open={openUploadFileDialog}
+                />
+                <FileUpdateDialog 
+                    onCancel={() => setOpenFileUpdateDialog(false)} 
+                    onConfirm={(data) => {
+                        if(itemUpdateSelected)
+                            updateFile({ ...itemUpdateSelected, ...data });
+                    }} 
+                    open={openFileUpdateDialog}
+                    data={itemUpdateSelected}
                 />
                 <AlertDefault 
                     {...alertData}

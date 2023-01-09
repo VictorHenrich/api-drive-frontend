@@ -5,16 +5,17 @@ import useApi from "../useApi";
 
 interface UploadFileServiceProps{
     filename: string,
+    filetype: string,
     content: File | Blob
 }
 
 
-export default class UploadFileService implements IService<UploadFileServiceProps, void>{
-    async execute({ filename, content }: UploadFileServiceProps): Promise<void> {
+export default class FileUploadService implements IService<UploadFileServiceProps, void>{
+    async execute({ filename, filetype, content }: UploadFileServiceProps): Promise<void> {
         const api = useApi();
 
         const data = {
-            filename,
+            filename: `${filename}.${filetype}`,
             content: await fileToBase64(content)
         };
 

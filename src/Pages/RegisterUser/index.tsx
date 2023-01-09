@@ -39,7 +39,7 @@ export default function RegisterUserPage(props: any){
 
         await userCreateService.execute({ ...userData });
 
-        navegate('/register', { replace: true });
+        navegate('/');
     }
 
     function changeState(props: Partial<RegisterUserData>){

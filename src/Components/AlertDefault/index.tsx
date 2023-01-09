@@ -29,7 +29,7 @@ export default function AlertDefault({
     message,
     open,
     status,
-    seconds = 1,
+    seconds = 2,
     onClose = ()=> null
 }: AlertDefaultProps){
 
@@ -54,13 +54,14 @@ export default function AlertDefault({
             onClose={onClose}
         >
             <DrawerContent background="transparent">
-                <Center marginBottom="60vh">
+                <Center marginBottom="10vh">
                     <Alert
                         status={status}
                         width="50vw"
                         minHeight={200}
                         flexDirection="column"
                         justifyContent="space-evenly"
+                        opacity="0.7"
                     >
                         <AlertIcon />
                         <AlertTitle

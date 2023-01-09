@@ -1,11 +1,8 @@
 import { useState, useEffect } from 'react';
 
 import {
-    Center,
     Stack,
-    Box,
     Icon,
-    Input,
     Button
 } from '@chakra-ui/react';
 
@@ -43,8 +40,10 @@ export default function UploadFileDialog({
     function handleClickConfirm(): void{
         if(!uploadFile) return;
 
+        const [filename]: string[] = fileName.split('.'); 
+
         onConfirm({
-            filename: fileName,
+            filename,
             file: uploadFile
         });
     }
@@ -52,11 +51,12 @@ export default function UploadFileDialog({
     function clearStates(){
         setUploadFile(null);
         setFileName("");
+        setInputFileDisabled(true);
     }
     
     return (
         <Dialog
-                title='Upload de arquivos'
+                title='Upload de arquivo'
                 onCancel={onCancel}
                 onConfirm={handleClickConfirm}
                 open={open}
@@ -72,7 +72,7 @@ export default function UploadFileDialog({
                         variant="filled"
                         value={fileName}
                         isDisabled={inputFileDisabled}
-                        onBlur={({ target }) => {
+                        onChange={({ target }) => {
                             setFileName(target.value);
                         }}
                     />
@@ -100,8 +100,10 @@ export default function UploadFileDialog({
 
                                     const [file]: FileList = inputFile.files;
 
+                                    const [filename]: string[] = file.name.split('.');
+
                                     setUploadFile(file);
-                                    setFileName(file.name);
+                                    setFileName(filename);
                                     setInputFileDisabled(false);
                                 });
 
