@@ -10,3 +10,14 @@ pode ser que o seu exemplo não apareça aqui.**
 - **NPM**  -  `npm install`
 
 - **YARN**  -  `yarn add`
+
+
+<br />
+
+**Após a instalação dos módulos necessários, você poderá executar seu projeto com o seguinte comando.**
+
+<br />
+
+- **NPM**  -  `npm run dev`
+
+- **YARN**  -  `yarn run dev`
