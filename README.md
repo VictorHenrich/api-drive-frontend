@@ -7,9 +7,9 @@ pode ser que o seu exemplo não apareça aqui.**
 
 <br />
 
-- **NPM**  -  `npm install`
+> **NPM**  =  `npm install`
 
-- **YARN**  -  `yarn add`
+> **YARN**  =  `yarn install`
 
 
 <br />
@@ -18,6 +18,6 @@ pode ser que o seu exemplo não apareça aqui.**
 
 <br />
 
-- **NPM**  -  `npm run dev`
+> **NPM**  =  `npm run dev`
 
-- **YARN**  -  `yarn run dev`
+> **YARN**  =  `yarn run dev`
