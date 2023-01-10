@@ -22,7 +22,8 @@ export interface FileItemProps<T>{
 
 export interface MenuOption<T>{
     text: string,
-    onClick: (data: T) => void
+    onClick: (data: T) => void,
+    icon: any
 }
 
 const scaleFileItemDefault: number = 1;
@@ -58,20 +59,21 @@ export default function FileItem({
                 setColorPrimary(colorPrimaryFileItemDefault);
             }}
         >
-                <MenuButton
-                    maxWidth={100}
-                    textOverflow="ellipsis"
-                    overflow="hidden"
-                    transition="all .3s"
-                    cursor="pointer"
-                    background={colorPrimary}
-                    border="2px solid"
-                    borderColor={colorSecondaryFileItemDefault}
-                    padding={2}
-                    transform={`scale(${scaleItem})`}
-                    borderRadius={5}
-                >
-                    <Stack spacing={2} direction="column">
+                <MenuButton>
+                    <Stack
+                        minWidth={100}
+                        maxWidth={250}
+                        spacing={2} 
+                        direction="column"
+                        whiteSpace="pre-wrap"
+                        transition="all .3s"
+                        cursor="pointer"
+                        background={colorPrimary}
+                        border="1.5px solid rgb(200, 200, 200)"
+                        padding={2}
+                        transform={`scale(${scaleItem})`}
+                        borderRadius={5}
+                    >
                         <Icon 
                             as={AiFillFile}
                             height={10}
@@ -80,13 +82,14 @@ export default function FileItem({
                         />
                         <Text
                             color={colorSecondary}
+                            fontWeight={550}
                         >
                             {filename}
                         </Text>
                     </Stack>
 
                 </MenuButton>
-                <MenuList background={colorPrimary}>
+                <MenuList background={colorPrimary} marginTop={2}>
                     {menuOptions.map(item => {
 
                         return (
@@ -101,7 +104,22 @@ export default function FileItem({
                                 borderBottom="1px solid"
                                 borderColor={"rgba(255, 255, 255, 0.5)"}
                             >
-                                {item.text}
+                                <Stack
+                                    minWidth={200}
+                                    direction="row"
+                                    spacing={5}
+                                    align="center"
+                                    justify="space-between"
+                                >
+                                    <Text>
+                                        {item.text}
+                                    </Text>
+                                    <Icon 
+                                        as={item.icon}
+                                        height={7}
+                                        width="auto"
+                                    />
+                                </Stack>
                             </MenuItem>
                         )
                     })}

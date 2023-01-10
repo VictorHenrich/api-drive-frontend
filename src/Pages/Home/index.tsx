@@ -11,7 +11,12 @@ import {
     Heading
 } from '@chakra-ui/react';
 
- import { AiFillFileAdd } from "react-icons/ai";
+ import { 
+        AiFillFileAdd, 
+        AiOutlineCloudDownload, 
+        AiOutlineEdit,
+        AiOutlineDelete
+} from "react-icons/ai";
 
 import ContainerApp from "../../Components/ContainerApp";
 import FileItem, { FileItemProps, MenuOption } from '../../Components/FileItem';
@@ -44,16 +49,19 @@ export default function HomePage(props: any){
 
     const optionsMenuFile: MenuOption<PayloadFileApi>[] = [
         {
+            onClick: downloadFileSelected,
+            text: "Baixar",
+            icon: AiOutlineCloudDownload
+        },
+        {
             onClick: updateFileSelected,
-            text: "Alterar"
+            text: "Alterar",
+            icon: AiOutlineEdit
         },
         {
             onClick: deleteFileSelected,
-            text: "Excluir"
-        },
-        {
-            onClick: downloadFileSelected,
-            text: "Baixar"
+            text: "Excluir",
+            icon: AiOutlineDelete
         }
     ]
 
